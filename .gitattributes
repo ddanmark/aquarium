@@ -1,0 +1,14 @@
+# 文本文件统一换行，避免 Windows/macOS 之间来回改动
+* text=auto eol=lf
+
+# 3D 资产与图片按二进制处理，不做换行转换、不参与文本 diff
+*.glb   binary
+*.gltf  binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.webp  binary
+
+# 生成物在 diff 里折叠
+js/models.js linguist-generated
+vendor/*.js  linguist-vendored

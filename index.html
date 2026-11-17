@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>澄屿 · 3D 生态水族箱</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css?v=20261117d">
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="38" height="38">
+          <path d="M6 26c6-9 14-13 21-13 6 0 10 3 15 7-4 9-11 14-19 14-7 0-13-3-17-8z" fill="#2b9aa6"/>
+          <path d="M33 17c4-3 8-3 11-1-3 4-5 7-9 9z" fill="#68c7bf"/>
+          <circle cx="14" cy="25" r="1.8" fill="#fff"/>
+          <path d="M4 38c5-3 9-3 13 0 4-3 8-3 12 0 4-3 9-3 15 0" stroke="#2b9aa6" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>澄屿 <span>AQUA WORLDS 3D</span></h1>
+        <p>一方会自己长大的水下世界</p>
+      </div>
+    </div>
+
+    <div class="clock-box">
+      <div class="clock-main"><strong id="dayLabel">第 1 天</strong><span class="season-pill" id="seasonLabel">春</span><span id="timeLabel">08:00</span></div>
+      <div class="clock-sub" id="lightLabel">白昼 · 灯光开启</div>
+    </div>
+
+    <div class="top-actions">
+      <div class="coins" title="观赏收益随水质与居民状态增长">
+        <span class="coin-dot"></span><b id="coinValue">200</b><small>贝壳币</small>
+      </div>
+      <div class="speed-group" id="speedGroup">
+        <button data-speed="1" class="active">1×</button>
+        <button data-speed="4">4×</button>
+        <button data-speed="16">16×</button>
+      </div>
+      <button class="ghost-btn" id="pauseBtn">暂停</button>
+      <button class="ghost-btn" id="fullBtn">全屏</button>
+      <button class="ghost-btn" id="helpBtn">玩法</button>
+    </div>
+  </header>
+
+  <div class="tank-toolbar">
+    <div class="tool-cluster">
+      <label class="tool-label" for="foodSelect">饲料</label>
+      <select id="foodSelect"></select>
+      <button class="primary-btn" id="feedBtn">撒一把</button>
+      <span class="food-desc" id="foodDesc"></span>
+    </div>
+    <div class="tool-cluster mode-cluster">
+      <button class="mode-btn active" id="modeFeed">点缸投喂</button>
+      <button class="mode-btn" id="modeInspect">观察点选</button>
+      <button class="mode-btn" id="modeLayout">布景摆位</button>
+    </div>
+    <div class="gear-bar" id="gearBar"></div>
+    <div class="care-cluster">
+      <button class="care-btn" id="shopBtn">🏪 商店</button>
+      <button class="care-btn" id="residentBtn">🐟 居民</button>
+      <button class="care-btn" id="dexBtn">📖 图鉴</button>
+      <button class="care-btn" id="waterBtn">换水</button>
+      <button class="care-btn" id="scrubBtn">擦藻</button>
+      <button class="care-btn" id="treatBtn">下药</button>
+      <button class="care-btn" id="resetViewBtn">复位视角</button>
+      <button class="care-btn" id="settingsBtn">设置</button>
+    </div>
+  </div>
+
+  <div class="stage-wrap">
+    <aside class="side-panel left" id="shopDrawer">
+      <div class="side-inner">
+        <div class="drawer-head">
+          <div><h2>水族商店</h2><p>挑一位新成员入缸</p></div>
+          <button class="drawer-close" data-drawer-close>收起</button>
+        </div>
+        <div class="tabs" id="shopTabs">
+          <button data-tab="fish" class="active">观赏鱼</button>
+          <button data-tab="plant">水草</button>
+          <button data-tab="invert">螺虾</button>
+          <button data-tab="gear">设备</button>
+          <button data-tab="decor">造景</button>
+        </div>
+        <label class="search-wrap">
+          <span class="search-ico">⌕</span>
+          <input type="search" id="shopSearch" class="search-box" placeholder="搜索名称 / 拼音 / 英文" autocomplete="off">
+        </label>
+        <div class="shop-list" id="shopList"></div>
+        <div class="shop-foot" id="shopHint"></div>
+      </div>
+    </aside>
+
+    <section class="stage" id="stage">
+      <canvas id="tank"></canvas>
+      <div class="stage-shine"></div>
+      <div class="night-veil" id="nightVeil"></div>
+      <div class="stage-badge" id="tankBadge"></div>
+      <div class="stage-hint" id="tankHint">单击水面投喂 · 按住拖动旋转视角 · 滚轮缩放 · 双击复位</div>
+      <div class="view-tip" id="viewTip">视角 0°</div>
+      <div class="sel-label" id="selLabel" hidden></div>
+    </section>
+
+    <aside class="side-panel right" id="infoDrawer">
+      <div class="side-inner">
+        <div class="drawer-head">
+          <div><h2>缸内居民</h2><p id="residentCount">0 位</p></div>
+          <button class="drawer-close" data-drawer-close>收起</button>
+        </div>
+        <div class="resident-list" id="residentList"></div>
+        <div class="detail-card" id="detailCard"></div>
+        <div class="log-head"><h3>水族日志</h3><span>最新在上</span></div>
+        <div class="log-list" id="logList"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="metrics-row" id="envGrid"></div>
+
+  <footer class="footer">
+    <span>Three.js 实时 3D 渲染 · 生态与品种习性参考常见淡水水族饲养资料，交互灵感来自 deskworlds。</span>
+    <span class="footer-right"><span id="saveState">进度自动保存在本机</span><button class="link-btn" id="exportBtn">导出存档</button><button class="link-btn" id="resetBtn">重置水族箱</button></span>
+  </footer>
+</div>
+
+<div class="modal-mask" id="settingsModal" hidden>
+  <div class="modal wide">
+    <div class="modal-head"><h2>水族箱设置</h2><button class="close-btn" data-close>关闭</button></div>
+    <div class="modal-body">
+      <h3>缸体尺寸</h3>
+      <p class="set-note">长 30–200cm、宽高 20–80cm，可任意组合。扩容补差价，缩小免费；换缸会改变水体容量与画面比例。</p>
+      <div class="tank-dims">
+        <div class="tank-row">
+          <span class="tank-lab">长</span>
+          <input type="range" id="tankL" min="30" max="200" step="1" value="90">
+          <output class="tank-val" id="tankLv">90</output><span class="tank-unit">cm</span>
+        </div>
+        <div class="tank-row">
+          <span class="tank-lab">宽</span>
+          <input type="range" id="tankW" min="20" max="80" step="1" value="30">
+          <output class="tank-val" id="tankWv">30</output><span class="tank-unit">cm</span>
+        </div>
+        <div class="tank-row">
+          <span class="tank-lab">高</span>
+          <input type="range" id="tankH" min="20" max="80" step="1" value="37">
+          <output class="tank-val" id="tankHv">37</output><span class="tank-unit">cm</span>
+        </div>
+      </div>
+      <p class="set-note tank-info" id="tankInfo"></p>
+      <h3>底砂</h3>
+      <p class="set-note">底砂影响观感；水草泥能让扎根水草长得更快，白沙最显脏。</p>
+      <div class="option-grid" id="subOptions"></div>
+      <h3>造景模板</h3>
+      <p class="set-note">一键摆出有构图的造景：底砂坡度、石头位置与大小、水草落位会一起调整。摆好之后还能在「布景摆位」里逐件微调。</p>
+      <div class="rock-row" id="scapeOptions"></div>
+      <h3>底砂地形</h3>
+      <p class="set-note">把底床堆出坡度或沙丘，水草和沉底的残饵会自动落在砂面上。</p>
+      <div class="option-grid" id="slopeOptions"></div>
+      <h3>石头造景</h3>
+      <p class="set-note">石头的形状、颜色、大小与数量随你排；在工具条可随时隐藏石景。</p>
+      <div class="rock-row" id="rockStyles"></div>
+      <div class="rock-row" id="rockColors"></div>
+      <div class="rock-row"><span class="rock-lab">大小</span><input type="range" id="rockSize" min="0.6" max="1.6" step="0.1"><span class="rock-lab">数量</span><input type="range" id="rockCount" min="2" max="7" step="1"></div>
+      <h3>自动化管家</h3>
+      <p class="set-note">挂机也能把缸养好：定时喂食换水擦藻、日照开关灯、缺氧自动打氧、发现病鱼自动下药。</p>
+      <div class="auto-list" id="autoOptions"></div>
+      <h3>观看方式</h3>
+      <div class="seg" id="viewOptions">
+        <button data-view="3d">3D 视角</button>
+        <button data-view="flat">平面视角（隐藏缸体）</button>
+      </div>
+      <p class="set-note" id="seasonInfo"></p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask" id="helpModal" hidden>
+  <div class="modal">
+    <div class="modal-head"><h2>怎么养这一缸水</h2><button class="close-btn" data-close>关闭</button></div>
+    <div class="modal-body">
+      <h3>1. 转动视角看鱼</h3>
+      <p>在缸内<b>按住鼠标拖动</b>可以左右环绕、上下俯仰地看这一缸水，滚轮拉近拉远，双击或点「复位视角」回到正面。<b>单击</b>缸面是投喂，注意别拖。画面默认隐藏缸体与边框，只看水下世界；想看带玻璃缸的样子，可以在「设置」里切回 <b>3D 视角</b>。</p>
+      <h3>2. 给成员起个名字</h3>
+      <p>在右侧「缸内居民」里选一位成员，详情卡里可以输入名字并按「命名」，名字会显示在 3D 标签和列表上。它们不只是长大：吃得饱、水质好会繁殖；水质恶化、温差、应激会让它们<b>生病</b>（体色发暗、食欲下降），拖久了会转成重症甚至死亡；活到寿命后段会进入老年，游得慢、颜色变淡，最后寿终正寝。</p>
+      <h3>3. 先布景，再放鱼</h3>
+      <p>点工具条上的「<b>商店</b>」「<b>居民</b>」按钮，会在缸体两侧打开侧栏（不会挡住画面）：买鱼、水草、螺虾和设备，看居民详情和水族日志。<b>买鱼时可以先选色型和鳍型</b>：斑马鱼有野生蓝纹、金色、豹纹，还能勾长鳍蝶翼；鼠鱼有熊猫、白鼠、花椒、绿铜、白化等常见品系。工具条切到「<b>布景摆位</b>」可以直接按住水草拖到心仪的位置；底砂坡度和石头的形状、颜色、大小都在「设置」里调整。水草白天光合产氧、吸收硝酸盐，还能压住藻类；灯太弱阳性草会黄叶徒长，灯太强又容易爆藻。缸体尺寸、底砂、观看方式都在「设置」里。</p>
+      <h3>4. 分层与食性是有讲究的</h3>
+      <p>孔雀鱼、斗鱼守着水面，红绿灯、斑马鱼在中层成群，鼠鱼和异型在缸底翻砂刮藻。<b>浮料喂上层，沉料喂底层</b>；没被吃掉的会变成残饵污染水体。鼠鱼、螺和虾能帮忙清残饵，小精灵异型只认缸壁上的藻。</p>
+      <h3>5. 卖鱼看季节，也看养功</h3>
+      <p>详情卡会给出<b>实时估价</b>：品种基准价 × 体型 × 年龄阶段 × 健康 × 是否生病 × 当季行情。春季繁殖季最贵，冬季最便宜；同一条鱼养得越大、越健康，卖价越高，老鱼会贬值。生病时卖不上价，先「下药」治好比急着出手划算。</p>
+      <h3>6. 维护水体与光线</h3>
+      <p>鱼便和残饵分解成氨氮，过滤器里的硝化菌把它转成硝酸盐，靠换水和速生水草移出。溶氧不足时鱼会浮头。光线是实时的：<b>夜里关灯缸里会明显变黑</b>，开弱/中/强三档灯，亮度会一档档亮起来；白天即使不开灯也有自然光。「设置」里还有<b>自动化管家</b>：定时喂食、定时换水、自动擦藻、日照时段自动开关灯、溶氧偏低自动打氧、发现病鱼自动下药，挂着也能把缸养好。默认 1× 下约 72 秒现实时间过一天，16× 约 5 秒一天，能很快看见鱼长大，但也更需勤投喂。</p>
+      <p class="fine">这是一个简化的教育性生态模拟：参数为求可玩性做过压缩，不作为真实饲养的精确处方。模型为程序化生成的写实风格 3D 几何，非照片扫描资产。</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask" id="dexModal" hidden>
+  <div class="modal dex">
+    <div class="modal-head"><h2>水族图鉴</h2><span class="dex-count" id="dexCount"></span><button class="close-btn" data-close>关闭</button></div>
+    <div class="dex-body">
+      <div class="dex-side">
+        <div class="tabs" id="dexTabs">
+          <button data-dex="all" class="active">全部</button>
+          <button data-dex="fish">观赏鱼</button>
+          <button data-dex="plant">水草</button>
+          <button data-dex="invert">螺虾</button>
+        </div>
+        <label class="search-wrap">
+          <span class="search-ico">⌕</span>
+          <input type="search" id="dexSearch" class="search-box" placeholder="搜索名称 / 拼音 / 拉丁名" autocomplete="off">
+        </label>
+        <div class="dex-list" id="dexList"></div>
+      </div>
+      <div class="dex-detail">
+        <div class="dex-view">
+          <canvas id="dexCanvas"></canvas>
+          <div class="dex-view-tip">拖动旋转 · 滚轮缩放</div>
+          <div class="dex-var-chips" id="dexVarChips"></div>
+        </div>
+        <div class="dex-info" id="dexInfo"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask" id="confirmModal" hidden>
+  <div class="modal small">
+    <div class="modal-head"><h2 id="confirmTitle">确认操作</h2><button class="close-btn" data-close>关闭</button></div>
+    <div class="modal-body"><p id="confirmText"></p></div>
+    <div class="modal-foot"><button class="ghost-btn" data-close>取消</button><button class="danger-btn" id="confirmOk">确定</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="vendor/three.min.js?v=20261117d"></script>
+<script src="vendor/GLTFLoader.js?v=20261117d"></script>
+<script src="vendor/SkeletonUtils.js?v=20261117d"></script>
+<script src="js/models.js?v=20261117d"></script>
+<script src="js/species.js?v=20261117d"></script>
+<script src="js/pinyin.js?v=20261117d"></script>
+<script src="js/sim.js?v=20261117d"></script>
+<script src="js/render.js?v=20261117d"></script>
+<script src="js/app.js?v=20261117d"></script>
+</body>
+</html>

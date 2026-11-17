@@ -1,0 +1,19 @@
+{
+  "name": "aquarium",
+  "version": "1.0.0",
+  "private": true,
+  "description": "澄屿 · 3D 生态水族箱 —— Three.js 实时渲染的淡水生态模拟，纯前端零构建",
+  "scripts": {
+    "serve": "node tools/serve.js",
+    "build:models": "node tools/build-models.js",
+    "verify": "node tools/verify_assets.js"
+  },
+  "keywords": [
+    "three.js",
+    "aquarium",
+    "ecosystem-simulation",
+    "webgl",
+    "gltf"
+  ],
+  "license": "MIT"
+}

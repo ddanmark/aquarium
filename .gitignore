@@ -1,0 +1,31 @@
+# ===== 构建中间产物（体积大，可由 models/*.glb 与 tools/ 脚本重新生成）=====
+# 模型流水线的原始下载件、预览渲染图、日志
+models/_raw/
+# 压贴图 / 绑骨 / 打包过程中的半成品
+models/_tmp/
+# 诊断用的对比图、contact sheet
+models/_test/
+# 历史备份与已清理的孤儿件
+models/_bak/
+
+# ===== 由 tools/build-models.js 生成的 base64 内嵌包（约 98MB）=====
+# 只有 file:// 直接双击打开时才需要，跑 `npm run build:models` 即可重建。
+# 清单文件 js/models.js 保留在版本库里：它是内嵌包的索引与缓存版本号。
+js/models/
+
+# ===== 开发期临时页面（依赖 models/_raw 原图，不入库）=====
+models/compare-new-fish.html
+
+# ===== 工具与运行时 =====
+tools/__pycache__/
+*.pyc
+*.log
+node_modules/
+
+# ===== 系统与编辑器 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
