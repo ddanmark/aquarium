@@ -178,6 +178,7 @@ python tools/ingest.py <模型.glb> <品种id> --name 显示名
 | [写实模型替换计划](docs/写实模型替换计划.md) | 低模 → AI 写实 GLB 的批量替换排期与验收门禁 |
 | [Blender程序化模型](docs/Blender程序化模型.md) | Blender 脚本建模的环境、硬约束、能力边界 |
 | [商店造景与搜索功能](docs/商店造景与搜索功能.md) | 造景 tab、拼音检索、随机造景件的实现说明 |
+| [仓库与发布](docs/仓库与发布.md) | 什么进版本库、怎么再生成、GitHub Pages 发布与本地网络绕行 |
 
 ---
 

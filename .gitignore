@@ -29,3 +29,6 @@ desktop.ini
 .vscode/
 .idea/
 *.swp
+
+# ===== 会话工作记录（本地记忆，不入库）=====
+.workbuddy/
